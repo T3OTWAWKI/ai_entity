@@ -1,0 +1,7 @@
+{
+  "parent": "ai_entity:custom/corrupted_essence",
+  "textures": {
+    "0": "ai_entity:block/",
+    "particle": "ai_entity:item/texture"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "mod_elements": [
+    {
+      "name": "C2",
+      "type": "livingentity",
+      "compiles": false,
+      "locked_code": false,
+      "registry_name": "c_2",
+      "metadata": {
+        "files": [
+          "src/main/resources/assets/ai_entity/models/item/c_2_spawn_egg.json",
+          "src/main/java/net/mcreator/aientity/entity/C2Entity.java",
+          "src/main/java/net/mcreator/aientity/client/renderer/C2Renderer.java",
+          "src/main/resources/data/ai_entity/forge/biome_modifier/c_2_biome_modifier.json"
+        ]
+      }
+    }
+  ],
+  "variable_elements": [],
+  "sound_elements": [],
+  "tag_elements": {},
+  "tab_element_order": {},
+  "language_map": {
+    "en_us": {
+      "item.ai_entity.c_2_spawn_egg": "Corruption Spawn Egg",
+      "entity.ai_entity.c_2": "Corruption"
+    }
+  },
+  "foldersRoot": {
+    "name": "~",
+    "children": []
+  },
+  "workspaceSettings": {
+    "modid": "ai_entity",
+    "modName": "ai_entity",
+    "version": "1.0.0",
+    "author": "adars, MCreator",
+    "websiteURL": "https://mcreator.net",
+    "license": "Not specified",
+    "serverSideOnly": false,
+    "requiredMods": [],
+    "dependencies": [],
+    "dependants": [],
+    "mcreatorDependencies": [],
+    "currentGenerator": "forge-1.20.1",
+    "modElementsPackage": "net.mcreator.aientity"
+  },
+  "mcreatorVersion": 202400452410
+}
