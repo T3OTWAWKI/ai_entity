@@ -3,6 +3,7 @@ package net.mcreator.aientity.entity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.BlockHitResult;
@@ -20,10 +21,7 @@ public class BlockBreakingGoal extends Goal {
 
     @Override
     public boolean canUse() {
-        if (mob.getTarget() == null) return false;
-
-        // If there's already line of sight, no need to break anything
-        if (mob.getSensing().hasLineOfSight(mob.getTarget()))
+        if (mob.getTarget() == null)
             return false;
 
         Vec3 fromVec = mob.position().add(0, mob.getEyeHeight(), 0);
@@ -35,8 +33,16 @@ public class BlockBreakingGoal extends Goal {
             BlockPos blockPos = result.getBlockPos();
             BlockState state = mob.level().getBlockState(blockPos);
 
-            // Only break solid, breakable blocks
-            if (!state.isAir() && state.getDestroySpeed(mob.level(), blockPos) >= 0) {
+            // If it's glass, break it even if there's line of sight
+            if (state.is(Blocks.GLASS) || state.is(Blocks.GLASS_PANE)) {
+                targetBlock = blockPos;
+                return true;
+            }
+
+            // Otherwise, only break solid blocks if there's no line of sight
+            if (!mob.getSensing().hasLineOfSight(mob.getTarget()) &&
+                !state.isAir() &&
+                state.getDestroySpeed(mob.level(), blockPos) >= 0) {
                 targetBlock = blockPos;
                 return true;
             }
@@ -58,7 +64,7 @@ public class BlockBreakingGoal extends Goal {
             // Optionally face the block
             mob.getLookControl().setLookAt(Vec3.atCenterOf(targetBlock));
 
-            if (breakTime >= 40) { // 2 seconds (20 ticks/second)
+            if (breakTime >= 20) { // 2 seconds (20 ticks/second)
                 mob.level().destroyBlock(targetBlock, true, mob);
                 breakTime = 0;
                 targetBlock = null;
