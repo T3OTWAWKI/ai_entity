@@ -14,6 +14,19 @@
           "src/main/resources/data/ai_entity/forge/biome_modifier/c_2_biome_modifier.json"
         ]
       }
+    },
+    {
+      "name": "CorruptedEssence",
+      "type": "item",
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "corrupted_essence",
+      "metadata": {
+        "files": [
+          "src/main/resources/assets/ai_entity/models/item/corrupted_essence.json",
+          "src/main/java/net/mcreator/aientity/item/CorruptedEssenceItem.java"
+        ]
+      }
     }
   ],
   "variable_elements": [],
@@ -23,6 +36,7 @@
   "language_map": {
     "en_us": {
       "item.ai_entity.c_2_spawn_egg": "Corruption Spawn Egg",
+      "item.ai_entity.corrupted_essence": "Corrupted Essence",
       "entity.ai_entity.c_2": "Corruption"
     }
   },

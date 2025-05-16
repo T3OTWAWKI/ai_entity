@@ -3,7 +3,7 @@
     {
       "name": "C2",
       "type": "livingentity",
-      "compiles": false,
+      "compiles": true,
       "locked_code": false,
       "registry_name": "c_2",
       "metadata": {

@@ -1,14 +1,12 @@
 package net.mcreator.aientity.entity;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.Mob;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.List;
 
 public class BlockBreakingGoal extends Goal {
     private final C2Entity mob;
@@ -21,30 +19,29 @@ public class BlockBreakingGoal extends Goal {
 
     @Override
     public boolean canUse() {
-        if (mob.getTarget() == null)
-            return false;
+        List<ServerPlayer> players = mob.level().getEntitiesOfClass(ServerPlayer.class, mob.getBoundingBox().inflate(16));
+        if (players.isEmpty()) return false;
 
-        Vec3 fromVec = mob.position().add(0, mob.getEyeHeight(), 0);
-        Vec3 toVec = mob.getTarget().position().add(0, mob.getTarget().getEyeHeight(), 0);
-        ClipContext context = new ClipContext(fromVec, toVec, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, mob);
-        BlockHitResult result = mob.level().clip(context);
+        ServerPlayer player = players.get(0); // Just pick the first player in range
 
-        if (result.getType() == HitResult.Type.BLOCK) {
-            BlockPos blockPos = result.getBlockPos();
-            BlockState state = mob.level().getBlockState(blockPos);
+        Vec3 fromVec = Vec3.atCenterOf(mob.blockPosition());
+        Vec3 toVec = Vec3.atCenterOf(player.blockPosition());
+        Vec3 direction = toVec.subtract(fromVec).normalize();
 
-            // If it's glass, break it even if there's line of sight
-            if (state.is(Blocks.GLASS) || state.is(Blocks.GLASS_PANE)) {
-                targetBlock = blockPos;
-                return true;
-            }
+        for (int i = 1; i <= 5; i++) {
+            Vec3 checkVec = fromVec.add(direction.scale(i));
+            BlockPos basePos = BlockPos.containing(checkVec);
 
-            // Otherwise, only break solid blocks if there's no line of sight
-            if (!mob.getSensing().hasLineOfSight(mob.getTarget()) &&
-                !state.isAir() &&
-                state.getDestroySpeed(mob.level(), blockPos) >= 0) {
-                targetBlock = blockPos;
-                return true;
+            // Check two vertical levels: foot and head
+            BlockPos[] positionsToCheck = { basePos, basePos.above() };
+
+            for (BlockPos pos : positionsToCheck) {
+                BlockState state = mob.level().getBlockState(pos);
+                if (!state.isAir() && state.getDestroySpeed(mob.level(), pos) >= 0) {
+                    targetBlock = pos;
+                    System.out.println("Targeting block to break: " + pos + " | Block: " + state.getBlock());
+                    return true;
+                }
             }
         }
 
@@ -58,13 +55,14 @@ public class BlockBreakingGoal extends Goal {
 
     @Override
     public void tick() {
-        if (targetBlock != null && mob.distanceToSqr(Vec3.atCenterOf(targetBlock)) <= 16) {
+        if (targetBlock != null && mob.distanceToSqr(Vec3.atCenterOf(targetBlock)) <= 36) {
             breakTime++;
 
-            // Optionally face the block
+            // Face the block
             mob.getLookControl().setLookAt(Vec3.atCenterOf(targetBlock));
 
-            if (breakTime >= 20) { // 2 seconds (20 ticks/second)
+            if (breakTime >= 20) {
+                System.out.println("Breaking block at: " + targetBlock);
                 mob.level().destroyBlock(targetBlock, true, mob);
                 breakTime = 0;
                 targetBlock = null;
