@@ -61,7 +61,7 @@ public class BlockBreakingGoal extends Goal {
             // Face the block
             mob.getLookControl().setLookAt(Vec3.atCenterOf(targetBlock));
 
-            if (breakTime >= 20) {
+            if (breakTime >= 10) {
                 System.out.println("Breaking block at: " + targetBlock);
                 mob.level().destroyBlock(targetBlock, true, mob);
                 breakTime = 0;
