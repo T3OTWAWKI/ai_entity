@@ -12,6 +12,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.common.MinecraftForge;
 
 import net.minecraft.resources.ResourceLocation;
@@ -20,6 +21,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.mcreator.aientity.init.AiEntityModTabs;
 import net.mcreator.aientity.init.AiEntityModItems;
 import net.mcreator.aientity.init.AiEntityModEntities;
+import net.mcreator.aientity.command.AIStatsCommand;
 
 import java.util.function.Supplier;
 import java.util.function.Function;
@@ -48,6 +50,13 @@ public class AiEntityMod {
 
 		// Start of user code block mod init
 		// End of user code block mod init
+	}
+
+	// Command registration event handler
+	@SubscribeEvent
+	public void onRegisterCommands(RegisterCommandsEvent event) {
+		AIStatsCommand.register(event.getDispatcher());
+		LOGGER.info("AI Entity commands registered");
 	}
 
 	// Start of user code block mod methods
